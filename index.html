@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bug Bash!</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #8f8;
+      font-family: 'Arial Black', sans-serif;
+      text-align: center;
+      padding-top: 40px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    #score, #timer {
+      font-size: 1.5rem;
+      margin: 10px;
+    }
+
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      grid-template-rows: repeat(3, 80px);
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .hole {
+      width: 80px;
+      height: 80px;
+      border: 3px solid #888;
+      border-radius: 50%;
+      background-color: #222;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .bug {
+      font-size: 2rem;
+      position: absolute;
+      top: 18px;
+      left: 25px;
+      animation: popIn 0.1s ease-out;
+    }
+
+    .squashed {
+      font-size: 2rem;
+      color: #7f7;
+      animation: fadeOut 0.5s forwards;
+    }
+
+    #game-over {
+      display: none;
+      font-size: 2rem;
+      margin-top: 30px;
+      color: #f66;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="score">Score: 0</div>
+  <div id="timer">Time: 30</div>
+  <h1>BUG BASH!</h1>
+
+  <div id="game-board">
+    <!-- 12 holes -->
+    <div class="hole" data-index="0"></div>
+    <div class="hole" data-index="1"></div>
+    <div class="hole" data-index="2"></div>
+    <div class="hole" data-index="3"></div>
+    <div class="hole" data-index="4"></div>
+    <div class="hole" data-index="5"></div>
+    <div class="hole" data-index="6"></div>
+    <div class="hole" data-index="7"></div>
+    <div class="hole" data-index="8"></div>
+    <div class="hole" data-index="9"></div>
+    <div class="hole" data-index="10"></div>
+    <div class="hole" data-index="11"></div>
+  </div>
+
+  <div id="game-over">Game Over! Final Score: <span id="final-score"></span></div>
+
+  <script>
+    const holes = document.querySelectorAll('.hole');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    const gameOverDisplay = document.getElementById('game-over');
+    const finalScoreDisplay = document.getElementById('final-score');
+
+    let score = 0;
+    let timeLeft = 30;
+    let gameInterval;
+    let bugInterval;
+    let gameActive = true;
+
+    function startGame() {
+      gameInterval = setInterval(updateTimer, 1000);
+      bugInterval = setInterval(showRandomBug, 600);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timerDisplay.textContent = `Time: ${timeLeft}`;
+      if (timeLeft <= 0) {
+        endGame();
+      }
+    }
+
+    function showRandomBug() {
+      if (!gameActive) return;
+
+      const index = Math.floor(Math.random() * holes.length);
+      const hole = holes[index];
+
+      if (hole.innerHTML !== '') return; // Skip if already occupied
+
+      const bug = document.createElement('div');
+      bug.classList.add('bug');
+      bug.textContent = '🐛';
+      hole.appendChild(bug);
+
+      bug.addEventListener('click', () => {
+        if (!gameActive) return;
+        score += 10;
+        scoreDisplay.textContent = `Score: ${score}`;
+        bug.remove();
+
+        const splat = document.createElement('div');
+        splat.classList.add('squashed');
+        splat.textContent = '💥';
+        hole.appendChild(splat);
+        setTimeout(() => hole.innerHTML = '', 500);
+      });
+
+      setTimeout(() => {
+        if (hole.contains(bug)) hole.innerHTML = '';
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      clearInterval(bugInterval);
+      gameActive = false;
+      gameOverDisplay.style.display = 'block';
+      finalScoreDisplay.textContent = score;
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
