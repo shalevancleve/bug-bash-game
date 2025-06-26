@@ -11,25 +11,33 @@
       font-family: 'Arial Black', sans-serif;
       text-align: center;
       padding-top: 40px;
+      margin: 0;
+      min-height: 100vh;
+      box-sizing: border-box;
     }
 
     h1 {
       font-size: 3rem;
-      margin-bottom: 20px;
+      margin-bottom: 32px;
+      margin-top: 0;
+      letter-spacing: 2px;
     }
 
     #score, #timer {
       font-size: 1.5rem;
-      margin: 10px;
+      margin: 18px 0 8px 0;
+      display: inline-block;
+      min-width: 120px;
     }
 
     #game-board {
       display: grid;
       grid-template-columns: repeat(4, 80px);
       grid-template-rows: repeat(3, 80px);
-      gap: 20px;
+      gap: 28px;
       justify-content: center;
-      margin-top: 30px;
+      margin-top: 36px;
+      margin-bottom: 24px;
     }
 
     .hole {
@@ -42,24 +50,55 @@
       cursor: pointer;
     }
 
-    .bug {
+    .bug, .beetle, .spider {
       font-size: 2rem;
       position: absolute;
       top: 18px;
       left: 25px;
       animation: popIn 0.1s ease-out;
+      cursor: pointer;
+      user-select: none;
     }
-
-    .squashed {
-      font-size: 2rem;
-      color: #7f7;
-      animation: fadeOut 0.5s forwards;
+    .beetle {
+      color: #bfa52a;
+      filter: drop-shadow(0 0 2px #bfa52a);
+    }
+    .spider {
+      color: #f66;
+      filter: drop-shadow(0 0 2px #f66);
+    }
+    #scoreboard, #legend {
+      background: #181;
+      color: #8f8;
+      border-radius: 10px;
+      padding: 20px 18px 20px 18px;
+      min-width: 140px;
+      min-height: 100px;
+      margin: 0 36px;
+      text-align: left;
+      font-size: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      box-shadow: 0 2px 12px #0608;
+    }
+    #scoreboard h3, #legend h3 {
+      margin: 0 0 14px 0;
+      font-size: 1.2rem;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    #legend span {
+      margin-right: 8px;
+      font-size: 1.3em;
+      vertical-align: middle;
     }
 
     #game-over {
       display: none;
       font-size: 2rem;
-      margin-top: 30px;
+      margin-top: 36px;
       color: #f66;
     }
 
@@ -80,50 +119,161 @@
         opacity: 1;
       }
     }
+
+    #play-btn, #pause-btn {
+      background: linear-gradient(90deg, #222 0%, #393 100%);
+      color: #8f8;
+      border: 2px solid #393;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      font-family: 'Arial Black', sans-serif;
+      padding: 14px 44px;
+      margin: 18px 16px 32px 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #060;
+      transition: background 0.2s, color 0.2s, transform 0.1s;
+    }
+    #play-btn:hover, #pause-btn:hover {
+      background: linear-gradient(90deg, #393 0%, #222 100%);
+      color: #fff;
+      transform: scale(1.05);
+    }
+    #play-btn:active, #pause-btn:active {
+      background: #161;
+      color: #fff;
+      transform: scale(0.98);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      #scoreboard, #legend {
+        min-width: 100px;
+        padding: 12px 6px;
+        margin: 0 8px;
+        font-size: 1rem;
+      }
+      #game-board {
+        gap: 16px;
+      }
+    }
+    @media (max-width: 700px) {
+      body {
+        padding-top: 10px;
+      }
+      #scoreboard, #legend {
+        display: none;
+      }
+      #game-board {
+        margin-top: 16px;
+        margin-bottom: 10px;
+      }
+    }
   </style>
 </head>
 <body>
   <div id="score">Score: 0</div>
-  <div id="timer">Time: 30</div>
+  <div id="timer">Time: 1</div>
   <h1>BUG BASH!</h1>
 
-  <div id="game-board">
-    <!-- 12 holes -->
-    <div class="hole" data-index="0"></div>
-    <div class="hole" data-index="1"></div>
-    <div class="hole" data-index="2"></div>
-    <div class="hole" data-index="3"></div>
-    <div class="hole" data-index="4"></div>
-    <div class="hole" data-index="5"></div>
-    <div class="hole" data-index="6"></div>
-    <div class="hole" data-index="7"></div>
-    <div class="hole" data-index="8"></div>
-    <div class="hole" data-index="9"></div>
-    <div class="hole" data-index="10"></div>
-    <div class="hole" data-index="11"></div>
+  <button id="play-btn">Play</button>
+  <button id="pause-btn" style="display:none;">Pause</button>
+  <div style="display: flex; justify-content: center; align-items: flex-start; margin-top: 36px; margin-bottom: 36px;">
+    <div id="scoreboard">
+      <h3>Top Scores</h3>
+      <div id="score1">1. --</div>
+      <div id="score2">2. --</div>
+      <div id="score3">3. --</div>
+    </div>
+    <div>
+      <div id="game-board">
+        <!-- 12 holes -->
+        <div class="hole" data-index="0"></div>
+        <div class="hole" data-index="1"></div>
+        <div class="hole" data-index="2"></div>
+        <div class="hole" data-index="3"></div>
+        <div class="hole" data-index="4"></div>
+        <div class="hole" data-index="5"></div>
+        <div class="hole" data-index="6"></div>
+        <div class="hole" data-index="7"></div>
+        <div class="hole" data-index="8"></div>
+        <div class="hole" data-index="9"></div>
+        <div class="hole" data-index="10"></div>
+        <div class="hole" data-index="11"></div>
+      </div>
+      <div id="game-over">Game Over! Final Score: <span id="final-score"></span></div>
+    </div>
+    <div id="legend">
+      <h3>Legend</h3>
+      <div>🐛 = 10 pts</div>
+      <div>🪲 = 20 pts</div>
+      <div>🕷️ = 50 pts</div>
+    </div>
   </div>
-
-  <div id="game-over">Game Over! Final Score: <span id="final-score"></span></div>
-
   <script>
     const holes = document.querySelectorAll('.hole');
     const scoreDisplay = document.getElementById('score');
     const timerDisplay = document.getElementById('timer');
     const gameOverDisplay = document.getElementById('game-over');
     const finalScoreDisplay = document.getElementById('final-score');
+    const playBtn = document.getElementById('play-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const score1 = document.getElementById('score1');
+    const score2 = document.getElementById('score2');
+    const score3 = document.getElementById('score3');
 
     let score = 0;
-    let timeLeft = 30;
+    let timeLeft = 10;
     let gameInterval;
     let bugInterval;
-    let gameActive = true;
+    let gameActive = false;
+    let paused = false;
+    let topScores = JSON.parse(localStorage.getItem('topScores') || '[]');
+
+    const bugTypes = [
+      { class: 'bug', emoji: '🐛', points: 10 },
+      { class: 'beetle', emoji: '🪲', points: 20 },
+      { class: 'spider', emoji: '🕷️', points: 50 }
+    ];
+
+    function updateScoreboard() {
+      score1.textContent = `1. ${topScores[0] !== undefined ? topScores[0] : '--'}`;
+      score2.textContent = `2. ${topScores[1] !== undefined ? topScores[1] : '--'}`;
+      score3.textContent = `3. ${topScores[2] !== undefined ? topScores[2] : '--'}`;
+    }
+
+    function resetBoard() {
+      holes.forEach(hole => hole.innerHTML = '');
+    }
+
+    function resetGame() {
+      clearInterval(gameInterval);
+      clearInterval(bugInterval);
+      score = 0;
+      timeLeft = 10;
+      gameActive = false;
+      paused = false;
+      scoreDisplay.textContent = `Score: ${score}`;
+      timerDisplay.textContent = `Time: ${timeLeft}`;
+      gameOverDisplay.style.display = 'none';
+      playBtn.textContent = 'Play';
+      playBtn.style.display = 'inline-block';
+      pauseBtn.style.display = 'none';
+      resetBoard();
+      updateScoreboard();
+    }
 
     function startGame() {
+      resetGame();
+      gameActive = true;
+      playBtn.style.display = 'none';
+      pauseBtn.style.display = 'inline-block';
+      paused = false;
       gameInterval = setInterval(updateTimer, 1000);
       bugInterval = setInterval(showRandomBug, 600);
     }
 
     function updateTimer() {
+      if (paused) return;
       timeLeft--;
       timerDisplay.textContent = `Time: ${timeLeft}`;
       if (timeLeft <= 0) {
@@ -132,21 +282,23 @@
     }
 
     function showRandomBug() {
-      if (!gameActive) return;
+      if (!gameActive || paused) return;
 
       const index = Math.floor(Math.random() * holes.length);
       const hole = holes[index];
 
       if (hole.innerHTML !== '') return; // Skip if already occupied
 
+      // Pick a random bug type
+      const bugType = bugTypes[Math.floor(Math.random() * bugTypes.length)];
       const bug = document.createElement('div');
-      bug.classList.add('bug');
-      bug.textContent = '🐛';
+      bug.classList.add(bugType.class);
+      bug.textContent = bugType.emoji;
       hole.appendChild(bug);
 
       bug.addEventListener('click', () => {
         if (!gameActive) return;
-        score += 10;
+        score += bugType.points;
         scoreDisplay.textContent = `Score: ${score}`;
         bug.remove();
 
@@ -157,20 +309,49 @@
         setTimeout(() => hole.innerHTML = '', 500);
       });
 
+      // Set bug lifetime based on its point value (lower value = longer time)
+      let bugLifetime;
+      if (bugType.points === 10) {
+        bugLifetime = 1400;
+      } else if (bugType.points === 20) {
+        bugLifetime = 1000;
+      } else {
+        bugLifetime = 700;
+      }
+
       setTimeout(() => {
         if (hole.contains(bug)) hole.innerHTML = '';
-      }, 1000);
+      }, bugLifetime);
     }
 
     function endGame() {
       clearInterval(gameInterval);
       clearInterval(bugInterval);
       gameActive = false;
+      paused = false;
       gameOverDisplay.style.display = 'block';
       finalScoreDisplay.textContent = score;
+      playBtn.textContent = 'Play Again';
+      playBtn.style.display = 'inline-block';
+      pauseBtn.style.display = 'none';
+      // Update top scores
+      topScores.push(score);
+      topScores = topScores.sort((a, b) => b - a).slice(0, 3);
+      localStorage.setItem('topScores', JSON.stringify(topScores));
+      updateScoreboard();
     }
 
-    startGame();
+    playBtn.addEventListener('click', startGame);
+
+    pauseBtn.addEventListener('click', () => {
+      if (!gameActive) return;
+      paused = !paused;
+      pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+    });
+
+    updateScoreboard();
+    // Remove auto-start
+    // startGame();
   </script>
 </body>
 </html>
